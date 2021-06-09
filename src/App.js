@@ -7,6 +7,7 @@ import Login from "./screens/Login";
 import NotFound from "./screens/NotFound";
 import { isLoggedInVar, darkModeVar } from "./apollo";
 import { darkTheme, lightTheme, GlobalStyles } from "./styles";
+import SignUp from "./screens/SignUp";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -17,12 +18,14 @@ function App() {
       <Router>
         <Switch>
           <Route path="/" exact>
-            { isLoggedIn? (
-              <Home />
-            ): (
-              <Login /> 
-            )}
+            { isLoggedIn? <Home /> : <Login /> }
           </Route>
+          
+          { !isLoggedIn? (
+              <Route path="/sign-up">
+                <Home />
+              </Route>
+            ) : null }
           <Route>
             <NotFound />
             {/* <Redirect to="/" /> */}
