@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
+
 import AuthLayout from "../components/auth/AuthLayout";
 import Button from "../components/auth/Button";
 import Separator from "../components/auth/Separator";
@@ -78,8 +79,8 @@ function Login() {
                         // required: true,
                         required: "Username is required.",
                         minLength: {
-                            value: 5,
-                            message: "Username should be longer than 5 characters",
+                            value: 3,
+                            message: "Username should be longer than 3 characters",
                         },
                         // pattern: "", // 정규식
                         // validate: (currentValue) => currentValue.includes("potato"),
