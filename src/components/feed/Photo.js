@@ -70,6 +70,7 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
     const updateToggleLike = (cache, result) => {
         const { data: { toggleLike: { ok } } } = result;
         if (ok) {
+            /*
             const fragmentId = `Photo:${id}`;
             const fragment = gql`
                 fragment BSName on Photo {
@@ -89,21 +90,36 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
             });
 
             // Photo prop에 isLiked, likes 값이 없다면? 아래처럼 캐시에서 읽어올 수 있음
-            /*const res = cache.readFragment({
-                id: fragmentId,
-                fragment
-            })
-            if ("isLiked" in res && "likes" in res) {
-                const { isLiked: cacheIsLiked, likes: cacheLikes } = res;
-                cache.writeFragment({
-                    id: fragmentId,
-                    fragment,
-                    data: {
-                        isLiked: !cacheIsLiked,
-                        likes: cacheIsLiked? cacheLikes - 1 : cacheLikes + 1,
+            // const res = cache.readFragment({
+            //     id: fragmentId,
+            //     fragment
+            // })
+            // if ("isLiked" in res && "likes" in res) {
+            //     const { isLiked: cacheIsLiked, likes: cacheLikes } = res;
+            //     cache.writeFragment({
+            //         id: fragmentId,
+            //         fragment,
+            //         data: {
+            //             isLiked: !cacheIsLiked,
+            //             likes: cacheIsLiked? cacheLikes - 1 : cacheLikes + 1,
+            //         },
+            //     });
+            // }
+            */
+
+            // cache modify 하는 새로운 방법 in apollo 3
+            const photoId = `Photo:${id}`;
+            cache.modify({
+                id: photoId,
+                fields: {
+                    isLiked(prev ){
+                        return !prev;
                     },
-                });
-            }*/
+                    likes(prev ){
+                        return isLiked? prev - 1 : prev + 1;
+                    }
+                },
+            });
         }
     };
     const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
