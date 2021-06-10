@@ -7,8 +7,8 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { isLoggedInVar } from "../apollo";
 import routes from "../routes";
-import useUser from "./hooks/useUser";
 import Avatar from "./Avatar";
+import useUser from "../hooks/useUser";
 
 const SHeader = styled.header`
   width: 100%;
@@ -66,7 +66,9 @@ function Header() {
                 <FontAwesomeIcon icon={faCompass} size="lg" />
               </Icon>
               <Icon>
-                <Avatar url={data?.me?.avatar} />
+                <Link to={`/users/${data?.me?.username}`}>
+                  <Avatar url={data?.me?.avatar} />
+                </Link>
               </Icon>
             </IconsContainer>
           ) : (
