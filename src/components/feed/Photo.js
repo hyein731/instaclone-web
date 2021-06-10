@@ -66,8 +66,49 @@ const Likes = styled(FatText)`
 `;
 
 function Photo({ id, user, file, isLiked, likes }) {
-    const [toggleLikeMutation, { loading }] = useMutation(TOGGLE_LIKE_MUTATION, {
-        variables: { id }
+    const updateToggleLike = (cache, result) => {
+        const { data: { toggleLike: { ok } } } = result;
+        if (ok) {
+            const fragmentId = `Photo:${id}`;
+            const fragment = gql`
+                fragment BSName on Photo {
+                    isLiked
+                    likes
+                }
+            `;
+
+            // witeFragment => cache에서 특정 object의 일부분 수정
+            cache.writeFragment({
+                id: fragmentId,
+                fragment,
+                data: {
+                    isLiked: !isLiked,
+                    likes: isLiked? likes - 1 : likes + 1,
+                },
+            });
+
+            // Photo prop에 isLiked, likes 값이 없다면? 아래처럼 캐시에서 읽어올 수 있음
+            /*const res = cache.readFragment({
+                id: fragmentId,
+                fragment
+            })
+            if ("isLiked" in res && "likes" in res) {
+                const { isLiked: cacheIsLiked, likes: cacheLikes } = res;
+                cache.writeFragment({
+                    id: fragmentId,
+                    fragment,
+                    data: {
+                        isLiked: !cacheIsLiked,
+                        likes: cacheIsLiked? cacheLikes - 1 : cacheLikes + 1,
+                    },
+                });
+            }*/
+        }
+    };
+    const [toggleLikeMutation] = useMutation(TOGGLE_LIKE_MUTATION, {
+        variables: { id },
+        // refetchQueries: [{ query: FEED_QUERY }] // Like 하나 업뎃하고 가져오기엔 너무 무거움
+        update: updateToggleLike,
     });
 
     return (
