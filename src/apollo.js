@@ -47,7 +47,7 @@ export const client = new ApolloClient({
     cache: new InMemoryCache({
         typePolicies: {
             User: {
-                keyFields: (obj) => `User:${obj.username},`
+                keyFields: (obj) => `User:${obj.username}`,
             },
         },
     }),
