@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import styled from "styled-components";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +7,7 @@ import { FatText } from "../components/shared";
 import { PHOTO_FRAGMENT } from "../fragments";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
+import useUser from "../hooks/useUser";
 
 
 const FOLLOW_USER_MUTATION = gql`
@@ -125,14 +126,36 @@ const ProfileBtn = styled(Button).attrs({
 })`
   margin-left: 10px;
   margin-top: 0px;
+  cursor: pointer;
 `;
 
 function Profile() {
     const { username } = useParams();
+    const { data: userData } = useUser();
     const { data, loading } = useQuery(SEE_PROFILE_QUERY, {
         variables: {
             username,
         },
+    });
+
+    const [unfollowUser] = useMutation(UNFOLLOW_USER_MUTATION, {
+        variables: {
+            username,
+        },
+        refetchQueries: [
+            { query: SEE_PROFILE_QUERY, variables: { username } },
+            { query: SEE_PROFILE_QUERY, variables: { username: userData?.me?.username } }
+        ],
+    });
+
+    const [followUser] = useMutation(FOLLOW_USER_MUTATION, {
+        variables: {
+            username,
+        },
+        refetchQueries: [
+            { query: SEE_PROFILE_QUERY, variables: { username } },
+            { query: SEE_PROFILE_QUERY, variables: { username: userData?.me?.username } }
+        ],
     });
 
     const getButton = (seeProfile) => {
@@ -141,9 +164,9 @@ function Profile() {
             return <ProfileBtn>Edit Profile</ProfileBtn>;
         }
         if (isFollowing) {
-            return <ProfileBtn>Unfollow</ProfileBtn>;
+            return <ProfileBtn onClick={unfollowUser}>Unfollow</ProfileBtn>;
         } else {
-            return <ProfileBtn>Follow</ProfileBtn>;
+            return <ProfileBtn onClick={followUser}>Follow</ProfileBtn>;
         }
     };
     
