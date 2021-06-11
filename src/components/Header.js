@@ -1,11 +1,11 @@
 import { useReactiveVar } from "@apollo/client";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faCompass } from "@fortawesome/free-regular-svg-icons";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
+import { isLoggedInVar, logUserOut } from "../apollo";
 import routes from "../routes";
 import Avatar from "./Avatar";
 import useUser from "../hooks/useUser";
@@ -59,6 +59,9 @@ function Header() {
         <Column>
           {isLoggedIn ? (
             <IconsContainer>
+              <Icon onClick={logUserOut}>
+                <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
+              </Icon>
               <Icon>
                 <Link to={routes.home}>
                   <FontAwesomeIcon icon={faHome} size="lg" />
